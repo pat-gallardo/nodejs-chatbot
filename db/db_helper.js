@@ -22,14 +22,12 @@ const insertProductDataDetails = async (tableName) => {
     dbConnection(query);
 }
 
-const createTables = () => {
+export const createTables = () => {
     modelList.forEach((model) =>{
         addTable(model.tableName, model.tableColumns);
     })
     insertProductDataDetails(modelList[1].tableName)
 }
-
-export default createTables;
 
 export const getProductCategory = async () => {
     console.log('modelList[1].tableName -', modelList[1].tableName)

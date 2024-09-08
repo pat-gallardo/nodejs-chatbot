@@ -1,5 +1,6 @@
 import { WebSocketServer } from "ws";
-import createTables, { getProductCategory } from "../db/db_helper.js";
+import { createTables } from "../db/db_helper.js";
+import { getMessage } from "../llm/llm_handler.js";
 
 const startWebSocketServer = () => {
   createTables();
@@ -13,10 +14,8 @@ const startWebSocketServer = () => {
       const userMessage = message.toString();
       console.log('Message recieve from client: ', userMessage)
 
-    //   (async () => {
-    //     const data = await getProductCategory();
-    //     // console.log('Fetched Data:', data); // This will log the data to your console
-    // })();
+      const response = getMessage(userMessage);
+
 
     socket.send("Sample response");
     })
