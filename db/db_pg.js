@@ -21,7 +21,8 @@ const dbConnection = async(query) => {
     });
     const client = await pool.connect();
     try{
-        await client.query(query);
+        const result = await client.query(query);
+        return result
     }
     catch (err) {
         console.error(err)

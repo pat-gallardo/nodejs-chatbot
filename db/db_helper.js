@@ -30,3 +30,14 @@ const createTables = () => {
 }
 
 export default createTables;
+
+export const getProductCategory = async () => {
+    console.log('modelList[1].tableName -', modelList[1].tableName)
+    const query = `SELECT * FROM ${modelList[1].tableName}`
+    try {
+        const result = await dbConnection(query);
+        return result;
+    } catch (err) {
+        console.error('Error fetching data:', err);
+    }
+}

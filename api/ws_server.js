@@ -1,23 +1,25 @@
 import { WebSocketServer } from "ws";
-import createTables from "../db/db_helper.js";
+import createTables, { getProductCategory } from "../db/db_helper.js";
 
 const startWebSocketServer = () => {
-  const wss = new WebSocketServer({ port: 8080 });
+  createTables();
+  const server = new WebSocketServer({ port: 8080 });
   
-  wss.on("connection", function connection(ws) {
-    ws.on("message", function message(data) {
-      console.log("received: %s", data);
-    });
-  
-    createTables();
-  
-  
-    ws.send("I know something about cricket, badminton and football sports goods.");
-    ws.send("Hit me with your best shot.");
-  
-  
-  
-  
+  server.on("connection", (socket) => {
+    socket.send("I know information about cricket, badminton and football sports goods.");
+    socket.send("How can I assist you today?");
+
+    socket.on("message", (message) => {
+      const userMessage = message.toString();
+      console.log('Message recieve from client: ', userMessage)
+
+    //   (async () => {
+    //     const data = await getProductCategory();
+    //     // console.log('Fetched Data:', data); // This will log the data to your console
+    // })();
+
+    socket.send("Sample response");
+    })
   
   });
 }
