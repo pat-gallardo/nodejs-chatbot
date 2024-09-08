@@ -1,5 +1,5 @@
 import { WebSocketServer } from "ws";
-import createTables from "../db/model.js";
+import createTables from "../db/db_helper.js";
 
 const startWebSocketServer = () => {
   const wss = new WebSocketServer({ port: 8080 });

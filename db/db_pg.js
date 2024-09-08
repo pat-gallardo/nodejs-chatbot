@@ -10,7 +10,7 @@ config({
     override: true,
     path: path.join(__dirname, '../dev.env')
 });
-const dbConnection = async(query, tableName) => {    
+const dbConnection = async(query) => {    
     const { Pool } = pkg;
     const pool = new Pool({
         user: process.env.USER,
@@ -22,7 +22,7 @@ const dbConnection = async(query, tableName) => {
     const client = await pool.connect();
     try{
         await client.query(query);
-        console.log(`Table ${tableName} created successfully`)}
+    }
     catch (err) {
         console.error(err)
     } finally {
