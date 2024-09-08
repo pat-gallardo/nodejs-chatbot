@@ -1,3 +1,3 @@
-import startWebSocketServer from "./api/ws_server";
+import startWebSocketServer from "./api/ws_server.js";
 
 startWebSocketServer();

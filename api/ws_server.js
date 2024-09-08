@@ -1,5 +1,5 @@
 import { WebSocketServer } from "ws";
-import dbConnection from "../db/database_pg.js"
+import createTables from "../db/model.js";
 
 const startWebSocketServer = () => {
   const wss = new WebSocketServer({ port: 8080 });
@@ -9,7 +9,7 @@ const startWebSocketServer = () => {
       console.log("received: %s", data);
     });
   
-   dbConnection();
+    createTables();
   
   
     ws.send("I know something about cricket, badminton and football sports goods.");
