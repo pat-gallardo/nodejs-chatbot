@@ -31,15 +31,10 @@ export const createTables = () => {
 }
 
 export const getProductCategory = async (productCategoryId) => {
-    console.log('productCategoryId', productCategoryId)
     const query = `SELECT * FROM ${modelList[1].tableName}
     WHERE id = ${productCategoryId}`
     try {
         let result = await dbConnection(query);
-        console.log('result.rowCount -', result.rowCount)
-        if (result.rowCount < 1){
-            result = defaultPrompt
-        }
         return result;
     } catch (err) {
         console.error('Error fetching data:', err);
