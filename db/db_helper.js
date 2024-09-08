@@ -1,6 +1,7 @@
 import dbConnection from "./db_pg.js";
 import { productDetailList } from "../templates/product_templates.js";
 import { modelList } from "./model.js";
+import { defaultPrompt } from "../templates/assistant_template.js";
 
 const addTable = async (tableName, columns) =>{
     const columnsQuery = columns.map(
@@ -29,11 +30,16 @@ export const createTables = () => {
     insertProductDataDetails(modelList[1].tableName)
 }
 
-export const getProductCategory = async () => {
-    console.log('modelList[1].tableName -', modelList[1].tableName)
-    const query = `SELECT * FROM ${modelList[1].tableName}`
+export const getProductCategory = async (productCategoryId) => {
+    console.log('productCategoryId', productCategoryId)
+    const query = `SELECT * FROM ${modelList[1].tableName}
+    WHERE id = ${productCategoryId}`
     try {
-        const result = await dbConnection(query);
+        let result = await dbConnection(query);
+        console.log('result.rowCount -', result.rowCount)
+        if (result.rowCount < 1){
+            result = defaultPrompt
+        }
         return result;
     } catch (err) {
         console.error('Error fetching data:', err);
