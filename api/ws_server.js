@@ -10,13 +10,13 @@ const startWebSocketServer = () => {
     socket.send("I know information about cricket, badminton and football sports goods.");
     socket.send("How can I assist you today?");
 
-    socket.on("message", (message) => {
+    socket.on("message", async (message) => {
       const userMessage = message.toString();
       console.log('Message recieve from client: ', userMessage)
 
-      const response = sendMessage(userMessage);
+      const response = await sendMessage(userMessage);
 
-    socket.send("Sample response");
+      socket.send(response);
     })
   
   });

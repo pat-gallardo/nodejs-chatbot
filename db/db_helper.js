@@ -40,3 +40,20 @@ export const getProductCategory = async (productCategoryId) => {
         console.error('Error fetching data:', err);
     }
 }
+
+export const insertUserMessage = async (userName, userMessage) => {
+    console.log('userName -', userName)
+    console.log('userMessage -', userMessage)
+
+    const query = `INSERT INTO ${modelList[0].tableName} (user_name, messages)
+    VALUES (${userName}, ${userMessage})
+    `
+    dbConnection(query);
+}
+
+export const insertAiMessage = async (aiName, aiMessage) => {
+    const query = `INSERT INTO ${modelList[0].tableName} (user_name, messages)
+    VALUES (${aiName}, ${aiMessage})
+    `
+    dbConnection(query);
+}
