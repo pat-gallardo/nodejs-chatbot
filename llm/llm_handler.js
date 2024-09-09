@@ -1,4 +1,4 @@
-import { getProductCategory, insertUserMessage, insertAiMessage } from "../db/db_helper.js";
+import { getProductCategory, insertUserMessage } from "../db/db_helper.js";
 import { assistantPrompt, defaultPrompt } from "../templates/assistant_template.js";
 import OpenAI from "openai";
 
@@ -40,15 +40,13 @@ export const sendMessage = async (userMessage) => {
         const openai = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
-        const completion = await openai.chat.completions.create({
+        const stream = await openai.chat.completions.create({
+            model: "gpt-4o-mini-2024-07-18",
             messages: [{ role: "system", content: `${prompt_template}` }],
-            model: "gpt-4o-mini-2024-07-18", // Use a valid model name
+            stream: true,
         });
-        const aiReply = completion.choices[0].message.content
-    
-        insertAiMessage('assistant', aiReply)
-    
-        return aiReply
+        
+        return stream
     }
     catch (error){
         console.error(error)

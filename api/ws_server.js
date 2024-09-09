@@ -1,6 +1,8 @@
 import { WebSocketServer } from "ws";
-import { createTables } from "../db/db_helper.js";
+import { createTables, insertAiMessage } from "../db/db_helper.js";
 import { sendMessage } from "../llm/llm_handler.js";
+
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const startWebSocketServer = async () => {
   createTables();
@@ -14,8 +16,15 @@ const startWebSocketServer = async () => {
       const userMessage = message.toString();
 
       const response = await sendMessage(userMessage);
-
-      socket.send(response);
+      let messageReply = ''
+      for await (const chunk of response) {
+        const content = chunk.choices[0]?.delta?.content || "";
+        messageReply = `${messageReply}${content}`
+        socket.send(messageReply);
+        await delay(100);
+    }
+    console.log('messageReply -', messageReply)
+    insertAiMessage('assistant', messageReply)
     })
   
   });
