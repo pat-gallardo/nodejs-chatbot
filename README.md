@@ -1,3 +1,11 @@
+# Chatbot Application using OpenAI API
+
+### Applications used
+
+1. **NodeJs** - This project was developed using NodeJs
+2. **Open AI Account** - This project utilise Open AI API for LLM.
+3. **PostgreSQL** - This project utilise storing of data through postgreSQL.
+
 # Project Documentation
 
 This project is a Node.js-based chatbot application that integrates with an LLM (Large Language Model) and uses WebSocket communication. It interacts with a PostgreSQL database and supports dynamic message responses based on predefined templates.
