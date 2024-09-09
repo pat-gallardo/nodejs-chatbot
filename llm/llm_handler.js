@@ -1,8 +1,6 @@
-import { getProductCategory } from "../db/db_helper.js";
+import { getProductCategory, insertUserMessage, insertAiMessage } from "../db/db_helper.js";
 import { assistantPrompt, defaultPrompt } from "../templates/assistant_template.js";
 import OpenAI from "openai";
-
-let prompt_template = '';
 
 const getMessage = (userMessage) => {
     const lowerUserMessage = userMessage.toLowerCase();
@@ -32,27 +30,28 @@ const formatTemplate = async (userMessage) => {
     return product_template;
 };
 
-// Function to initialize or refresh the prompt_template
-const initializePromptTemplate = async (userMessage) => {
-    prompt_template = await formatTemplate(userMessage);
-};
-
 // Expose function to handle messages
 export const sendMessage = async (userMessage) => { 
     // Initialize prompt_template if not set
-    if (!prompt_template) {
-        await initializePromptTemplate(userMessage);
+    try{
+        insertUserMessage('user',userMessage)
+        const prompt_template = await formatTemplate(userMessage);
+    
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+        const completion = await openai.chat.completions.create({
+            messages: [{ role: "system", content: `${prompt_template}` }],
+            model: "gpt-4o-mini-2024-07-18", // Use a valid model name
+        });
+        const aiReply = completion.choices[0].message.content
+    
+        insertAiMessage('assistant', aiReply)
+    
+        return aiReply
     }
-    const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    const completion = await openai.chat.completions.create({
-        messages: [{ role: "system", content: `${prompt_template}` }],
-        model: "gpt-4", // Use a valid model name
-    });
-
-    const aiReply = completion.choices[0].message.content
-
-    return aiReply
+    catch (error){
+        console.error(error)
+    }
+    
 };

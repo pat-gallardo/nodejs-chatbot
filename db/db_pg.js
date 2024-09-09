@@ -10,8 +10,8 @@ config({
     override: true,
     path: path.join(__dirname, '../dev.env')
 });
-const dbConnection = async(query) => {    
-    const { Pool } = pkg;
+
+const { Pool } = pkg;
     const pool = new Pool({
         user: process.env.USER,
         host: process.env.HOST,
@@ -19,13 +19,16 @@ const dbConnection = async(query) => {
         password: process.env.PASSWORD,
         port: process.env.PORT
     });
+
+const dbConnection = async(query, params = []) => {    
     const client = await pool.connect();
     try{
-        const result = await client.query(query);
+        const result = await client.query(query, params);
         return result
     }
     catch (err) {
-        console.error(err)
+        console.error('Database query error:', err);
+        throw err;
     } finally {
         client.release();
     }

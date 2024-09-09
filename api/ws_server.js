@@ -2,7 +2,7 @@ import { WebSocketServer } from "ws";
 import { createTables } from "../db/db_helper.js";
 import { sendMessage } from "../llm/llm_handler.js";
 
-const startWebSocketServer = () => {
+const startWebSocketServer = async () => {
   createTables();
   const server = new WebSocketServer({ port: 8080 });
   
@@ -12,7 +12,6 @@ const startWebSocketServer = () => {
 
     socket.on("message", async (message) => {
       const userMessage = message.toString();
-      console.log('Message recieve from client: ', userMessage)
 
       const response = await sendMessage(userMessage);
 

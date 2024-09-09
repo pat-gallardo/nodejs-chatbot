@@ -1,7 +1,6 @@
 import dbConnection from "./db_pg.js";
 import { productDetailList } from "../templates/product_templates.js";
 import { modelList } from "./model.js";
-import { defaultPrompt } from "../templates/assistant_template.js";
 
 const addTable = async (tableName, columns) =>{
     const columnsQuery = columns.map(
@@ -9,7 +8,15 @@ const addTable = async (tableName, columns) =>{
     ).join(', ')
 
     const query = `CREATE TABLE IF NOT EXISTS ${tableName} (${columnsQuery})`;
-    dbConnection(query, tableName);
+    await dbConnection(query, []);
+}
+
+export const createTables = async () => {
+    for (const model of modelList) {
+        await addTable(model.tableName, model.tableColumns);
+    }
+    // Ensure tables are created before inserting data
+    await insertProductDataDetails(modelList[1].tableName);
 }
 
 const insertProductDataDetails = async (tableName) => {
@@ -23,18 +30,11 @@ const insertProductDataDetails = async (tableName) => {
     dbConnection(query);
 }
 
-export const createTables = () => {
-    modelList.forEach((model) =>{
-        addTable(model.tableName, model.tableColumns);
-    })
-    insertProductDataDetails(modelList[1].tableName)
-}
-
 export const getProductCategory = async (productCategoryId) => {
     const query = `SELECT * FROM ${modelList[1].tableName}
-    WHERE id = ${productCategoryId}`
+    WHERE id = $1`
     try {
-        let result = await dbConnection(query);
+        let result = await dbConnection(query, [productCategoryId]);
         return result;
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -42,18 +42,22 @@ export const getProductCategory = async (productCategoryId) => {
 }
 
 export const insertUserMessage = async (userName, userMessage) => {
-    console.log('userName -', userName)
-    console.log('userMessage -', userMessage)
-
-    const query = `INSERT INTO ${modelList[0].tableName} (user_name, messages)
-    VALUES (${userName}, ${userMessage})
-    `
-    dbConnection(query);
+    const query = `
+    INSERT INTO ${modelList[0].tableName} (user_name, messages)
+    VALUES ($1, $2)
+`;
+    try {
+        await dbConnection(query, [userName, userMessage]);
+    } catch (err) {
+        console.error('Database query error:', err);
+        throw err; // Optionally rethrow the error to be handled by the caller
+    }
 }
 
 export const insertAiMessage = async (aiName, aiMessage) => {
-    const query = `INSERT INTO ${modelList[0].tableName} (user_name, messages)
-    VALUES (${aiName}, ${aiMessage})
-    `
-    dbConnection(query);
+    const query = `
+    INSERT INTO ${modelList[0].tableName} (user_name, messages)
+    VALUES ($1, $2)
+`;
+    await dbConnection(query, [aiName, aiMessage]);
 }
